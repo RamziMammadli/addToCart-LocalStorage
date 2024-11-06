@@ -1,32 +1,40 @@
 let div = document.querySelector(".main");
-let count = document.querySelector(".count");
-div.style = "display:flex; flex-wrap:wrap";
-
+let count = document.querySelector(".count"); div.style = "display:flex; flex-wrap:wrap";
 axios.get("https://dummyjson.com/products").then((res) => {
   db = res.data.products;
   db.forEach((item) => {
     let box = document.createElement("div");
     box.style =
-      "width:100px; height:150px; border: 1px solid black; margin:15px; padding:15px";
-    box.innerHTML = `<p>${item.title}</p> <button onclick="sebeteAt(${item.id})">Sebete at</button> 
+      "width:100px; height:150px; border:  1px solid black; margin:15px; padding:15px";
+    box.innerHTML = `<p>${item.title}</p><button onclick="sebeteAt(${item.id})">Sebete at</button> 
     <button onclick="addWish(${item.id})">Favori at</button>`;
     div.appendChild(box);
   });
 });
+const sebeteAt = (id) => {
+  let product = db.find(item => item.id === id)
+  let data = {...product,count:1}
+  axios.post("https://672b4c0f976a834dd0267ab4.mockapi.io/baskets",data)
+  .then(res => {
+    console.log('gonderildi', data);
+  }) 
+};
 
-function sebeteAt(id) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  let currentProduct = db.find((item) => item.id === id);
-  let existingProduct = cart.find((item) => item.id === id);
 
-  if (existingProduct) {
-    existingProduct.count += 1;
-  } else {
-    cart.push({ ...currentProduct, count: 1 });
-  }
-  localStorage.setItem("cart", JSON.stringify(cart));
-  displayCount();
-}
+
+
+// function sebeteAt(id) {
+//   let cart = JSON.parse(localStorage.getItem("cart")) || [];
+//   let currentProduct = db.find((item) => item.id === id);
+//   let existingProduct = cart.find((item) => item.id === id);
+//   if (existingProduct) {
+//     existingProduct.count += 1;
+//   } else {
+//     cart.push({ ...currentProduct, count: 1 });
+//   }
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   displayCount();
+// }
 
 function addWish(id) {
   let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];

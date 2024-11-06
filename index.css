@@ -1,0 +1,14 @@
+body {
+    padding: 50px;
+}
+.aaa {
+    position: relative;
+    padding: 5px;
+    margin-top: 25px;
+
+}
+.count {
+    position: absolute;
+    top: -25px;
+    right: -5px;
+}
