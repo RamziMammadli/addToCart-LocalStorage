@@ -1,4 +1,5 @@
 let div = document.querySelector(".main");
+div.style = "display:flex; flex-wrap:wrap";
 
 function getItems () {
   div.innerHTML = ``

@@ -1,5 +1,7 @@
 let div = document.querySelector(".main");
 let count = document.querySelector(".count"); div.style = "display:flex; flex-wrap:wrap";
+
+
 axios.get("https://dummyjson.com/products").then((res) => {
   db = res.data.products;
   db.forEach((item) => {
@@ -7,18 +9,41 @@ axios.get("https://dummyjson.com/products").then((res) => {
     box.style =
       "width:100px; height:150px; border:  1px solid black; margin:15px; padding:15px";
     box.innerHTML = `<p>${item.title}</p><button onclick="sebeteAt(${item.id})">Sebete at</button> 
-    <button onclick="addWish(${item.id})">Favori at</button>`;
+    <button onclick="favoriAt(${item.id})">Favori at</button>`;
     div.appendChild(box);
   });
 });
+
+
 const sebeteAt = (id) => {
-  let product = db.find(item => item.id === id)
-  let data = {...product,count:1}
-  axios.post("https://672b4c0f976a834dd0267ab4.mockapi.io/baskets",data)
-  .then(res => {
-    console.log('gonderildi', data);
-  }) 
+  axios.get('https://northwind.vercel.app/api/categories')
+  .then((res) => {
+    cart = res.data
+    let currentProduct = db.find(item => item.id === id)
+    let existingProduct = cart.find(item => item.id === id)
+    if(existingProduct) {
+      axios.put(`https://northwind.vercel.app/api/categories/${id}`, {...existingProduct, count: existingProduct.count + 1})
+    } else {
+      axios.post('https://northwind.vercel.app/api/categories', {...currentProduct, count: 1})
+    }
+  })
 };
+
+
+// const favoriAt = (id) => {
+//   axios.get('https://northwind.vercel.app/api/categories')
+//   .then((res) => {
+//     wish = res.data
+//     let currentProduct = db.find(item => item.id === id)
+//     let existingProduct = wish.find(item => item.id === id)
+
+//     if(existingProduct) {
+//       alert('Artiq elave edilib')
+//     } else {
+//       axios.post('https://northwind.vercel.app/api/categories', currentProduct)
+//     }
+//   })
+// }
 
 
 
@@ -35,27 +60,3 @@ const sebeteAt = (id) => {
 //   localStorage.setItem("cart", JSON.stringify(cart));
 //   displayCount();
 // }
-
-function addWish(id) {
-  let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-  let currentProduct = db.find((item) => item.id === id);
-  let existingProduct = wishlist.find((item) => item.id === id);
-  if (existingProduct) {
-    alert("Mehsul artiq elave edilib");
-  } else {
-    wishlist.push(currentProduct);
-  }
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-}
-const displayCount = () => {
-  let cart = JSON.parse(localStorage.getItem("cart"));
-  let total = 0;
-  cart.forEach((item) => {
-    total += item.count;
-  });
-  count.innerText = total;
-};
-
-window.onload = () => {
-  displayCount();
-};
